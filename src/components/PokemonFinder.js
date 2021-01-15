@@ -5,6 +5,8 @@ const PokemonFinder = (props) => {
     const [pokemons, setPokemons] = useState([])
     const [pokemonName, setPokemonName] = useState('')
     const [myTeam, setMyTeam] = useState([])
+    const [statsName, setStatsName] = useState('Stats ►')
+    const [isStatsOpen, setIsStatsOpen] = useState(false)
 
     const handlePokemonNameChange = (e) => {
         e.preventDefault()
@@ -21,8 +23,21 @@ const PokemonFinder = (props) => {
     }
 
     const addPokemonToTeam = () => {
-        setMyTeam([...myTeam, pokemons])
-        console.log(myTeam)
+        if (myTeam.length < 6) {
+            setMyTeam([...myTeam, pokemons])
+        } else {
+            alert("Your team is already full!")
+        }
+    }
+
+    function handleStatChange() {
+        if (isStatsOpen) {
+            setIsStatsOpen(false)
+            setStatsName("Stats ►")
+        } else {
+            setIsStatsOpen(true)
+            setStatsName("Stats ▼")
+        }
     }
 
     if (pokemons.length === 0) {
@@ -39,27 +54,36 @@ const PokemonFinder = (props) => {
                     <input type="text" value={pokemonName} placeholder="pokemon" onChange={handlePokemonNameChange}></input>
                     <button type="submit" onClick={findPokemon}>Search</button>
                     <h4>{pokemons.name}</h4>
-                    <img src={pokemons.sprites.front_default} />
+                    <img src={pokemons.sprites.front_default} alt="Default sprite" />
                     <div>
-                        {(pokemons.types.map(type =>
-                            <p>{type.type.name}</p>
+                        {(pokemons.types.map((type, key) =>
+                            <p key={key}>{type.type.name}</p>
                         ))}
                     </div>
+                    {/* <p>{pokemons.stats[0].base_stat}</p> */}
+                    <button onClick={handleStatChange}>{statsName}</button><br />
+                    {isStatsOpen ?
+                        <div>
+                            {pokemons.stats.map((pokeStats, key) => (
+                                <p key={key}>{pokeStats.stat.name}: {pokeStats.base_stat}</p>
+                            ))}
+                        </div> : null
+                    }
                     <button type="submit" onClick={addPokemonToTeam}>Add to my team</button>
-                    {/* <button onClick={e => {
-                        console.log(myTeam)
-                    }}>test</button> */}
                 </div>
                 <div>
                     <h3>My team</h3>
-                    {(myTeam.map(pokemon =>
-                        <div>
+                    {(myTeam.map((pokemon, key) =>
+                        <div key={key}>
                             <h3>{pokemon.name}</h3>
-                            <img src={pokemon.sprites.front_default} />
-                            {(pokemon.types.map(type =>
-                                <p>{type.type.name}</p>
+                            <img src={pokemon.sprites.front_default} alt="Default sprite" />
+                            <button onClick={() => {
+                                setMyTeam(myTeam.filter(poke => poke !== pokemon))
+                                // setMyTeam(myTeam.splice(myTeam.indexOf(pokemon),1))
+                            }}>Remove</button>
+                            {(pokemon.types.map((type, key) =>
+                                <p key={key}>{type.type.name}</p>
                             ))}
-                            {/* <p>{pokemon.types[0].type.name}</p> */}
                         </div>
                     ))}
                 </div>
