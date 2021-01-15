@@ -23,10 +23,15 @@ const PokemonFinder = (props) => {
     }
 
     const addPokemonToTeam = () => {
-        if (myTeam.length < 6) {
+        if (myTeam.some(poke => poke.name === pokemons.name)) {
+            alert("Your team already contains that pokemon!")
+        } else if (myTeam.length >= 6) {
+            alert("Your team is already full!")
+        }
+        else if (myTeam.length < 6) {
             setMyTeam([...myTeam, pokemons])
         } else {
-            alert("Your team is already full!")
+            return null
         }
     }
 
